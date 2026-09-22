@@ -82,6 +82,14 @@ class CLIArgParser(argparse.ArgumentParser):
                 msg.extend(extra)
             raise argparse.ArgumentError(action, '\n'.join(msg))
 
+    def _check_help(self, action):
+        # Python 3.14 added eager help validation that raises
+        # ValueError on literal %% in help strings. AWS CLI
+        # generates help text from service model documentation
+        # which can contain literal percent signs, so we override
+        # this method to be a no-op.
+        pass
+
     def parse_known_args(self, args, namespace=None):
         parsed, remaining = super(CLIArgParser, self).parse_known_args(
             args, namespace
