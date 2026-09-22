@@ -5,8 +5,9 @@
 
 import argparse
 import os
+import sys
 from contextlib import contextmanager
-from subprocess import check_call
+from subprocess import run as subprocess_run
 
 _dname = os.path.dirname
 
@@ -28,7 +29,8 @@ def run(command, allow_repo_root_on_path=False):
     env = os.environ.copy()
     if not allow_repo_root_on_path:
         env['TESTS_REMOVE_REPO_ROOT_FROM_PATH'] = 'true'
-    return check_call(command, shell=True, env=env)
+    result = subprocess_run(command, shell=True, env=env)
+    return result.returncode
 
 
 def process_args(args):
@@ -126,4 +128,5 @@ if __name__ == "__main__":
     print(f"CDing to {tests_path}")
     print(f"Running {cmd}...")
     with cd(tests_path):
-        run(cmd, allow_repo_root_on_path=raw_args.allow_repo_root_on_path)
+        rc = run(cmd, allow_repo_root_on_path=raw_args.allow_repo_root_on_path)
+    sys.exit(rc)

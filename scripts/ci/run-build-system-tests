@@ -4,7 +4,7 @@ import os
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from subprocess import check_call
+from subprocess import run as subprocess_run
 
 REPO_ROOT = Path(__file__).parents[2].absolute()
 RUN_TESTS_SCRIPTS = os.path.join(REPO_ROOT, "scripts", "ci", "run-tests")
@@ -22,18 +22,20 @@ def cd(path):
 
 
 def run(command):
-    return check_call(command, shell=True)
+    result = subprocess_run(command, shell=True)
+    return result.returncode
 
 
 def main(tests_path=None):
     if tests_path is None:
         tests_path = REPO_ROOT / "tests"
     with cd(tests_path):
-        run(
+        rc = run(
             f"{sys.executable} {RUN_TESTS_SCRIPTS} "
             f"--tests-path {tests_path} "
             f"backends/build_system/ --allow-repo-root-on-path"
         )
+    sys.exit(rc)
 
 
 if __name__ == "__main__":
