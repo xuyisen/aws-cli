@@ -91,6 +91,10 @@ class CLIArgParser(argparse.ArgumentParser):
                 msg.extend(extra)
             raise argparse.ArgumentError(action, '\n'.join(msg))
 
+
+    def _check_help(self, action):
+        return
+
     def parse_known_args(self, args, namespace=None):
         parsed, remaining = super(CLIArgParser, self).parse_known_args(
             args, namespace

@@ -1,0 +1,18 @@
+include .gitignore
+include .coveragerc
+recursive-include .changes *.json
+include configure.ac
+include Makefile.in
+include *.md
+include *.rst
+include *.txt
+include *.yaml
+recursive-include bin *
+recursive-include awscli *
+recursive-include tests *
+recursive-include backends *
+recursive-include doc *
+recursive-include exe *
+recursive-include requirements *
+recursive-include scripts *
+global-exclude tests/coverage.xml

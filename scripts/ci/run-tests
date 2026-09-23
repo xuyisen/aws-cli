@@ -5,8 +5,9 @@
 
 import argparse
 import os
+import sys
 from contextlib import contextmanager
-from subprocess import check_call
+from subprocess import CalledProcessError, check_call
 
 _dname = os.path.dirname
 
@@ -28,7 +29,11 @@ def run(command, allow_repo_root_on_path=False):
     env = os.environ.copy()
     if not allow_repo_root_on_path:
         env['TESTS_REMOVE_REPO_ROOT_FROM_PATH'] = 'true'
-    return check_call(command, shell=True, env=env)
+    try:
+        return check_call(command, shell=True, env=env)
+    except CalledProcessError as e:
+        print(f"Command failed with exit code {e.returncode}: {command}", file=sys.stderr)
+        sys.exit(e.returncode)
 
 
 def process_args(args):

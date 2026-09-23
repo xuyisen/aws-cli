@@ -171,7 +171,8 @@ class CLISessionOrchestrator:
 
     @cached_property
     def session_id(self):
-        if (cached_data := self._reader.read(self.cache_key)) is not None:
+        cached_data = self._reader.read(self.cache_key)
+        if cached_data is not None and self._is_active(cached_data):
             cached_data.timestamp = self._timestamp
             self._writer.write(cached_data)
             return cached_data.session_id
@@ -183,6 +184,9 @@ class CLISessionOrchestrator:
         )
         self._writer.write(session_data)
         return session_id
+
+    def _is_active(self, cached_data):
+        return cached_data.timestamp >= self._timestamp - _SESSION_LENGTH_SECONDS
 
     @cached_property
     def _tty(self):
